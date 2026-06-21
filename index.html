@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>學期成績計算機</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  font-family:'Poppins','Inter',-apple-system,sans-serif;
+  background:#F5F3EF;
+  color:#1A1A1A;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+/* ── Bauhaus Variables ── */
+:root{
+  --red:#E63946;
+  --yellow:#FFB703;
+  --blue:#0077B6;
+  --black:#1A1A1A;
+  --white:#FFFFFF;
+  --cream:#F5F3EF;
+  --gray:#8A8A8A;
+  --light-gray:#E8E6E1;
+  --success:#2D9A4E;
+  --danger:#E63946;
+  --font:'Poppins','Inter',sans-serif;
+}
+
+/* ── Container ── */
+.app{
+  width:100%;
+  max-width:420px;
+  padding:20px 16px 40px;
+}
+
+/* ── Header ── */
+.header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:24px;
+  padding-bottom:16px;
+  border-bottom:3px solid var(--black);
+}
+.header-icon{
+  width:40px;height:40px;
+  background:var(--blue);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:var(--white);
+  font-size:18px;
+  flex-shrink:0;
+}
+.header h1{
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:-0.3px;
+  line-height:1.2;
+}
+.header .sub{
+  font-size:11px;
+  color:var(--gray);
+  font-weight:400;
+  letter-spacing:0.3px;
+  margin-top:2px;
+}
+
+/* ── Weight Info ── */
+.weight-badges{
+  display:flex;
+  gap:6px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+.weight-badge{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 10px;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0.3px;
+  border:2px solid var(--black);
+}
+.weight-badge .pct{
+  font-weight:700;
+}
+.weight-badge:nth-child(1){background:var(--red);color:var(--white)}
+.weight-badge:nth-child(2){background:var(--yellow);color:var(--black)}
+.weight-badge:nth-child(3){background:var(--blue);color:var(--white)}
+.weight-badge:nth-child(4){background:var(--black);color:var(--white)}
+
+/* ── Score Inputs ── */
+.score-group{
+  display:grid;
+  gap:12px;
+  margin-bottom:24px;
+}
+.score-card{
+  background:var(--white);
+  border:2px solid var(--black);
+  padding:14px 16px;
+  display:grid;
+  grid-template-columns:1fr 80px;
+  align-items:center;
+  gap:12px;
+  transition:border-color 0.15s;
+}
+.score-card:focus-within{
+  border-color:var(--blue);
+}
+.score-card .label-wrap{
+  display:flex;
+  flex-direction:column;
+}
+.score-card .label-wrap .name{
+  font-size:14px;
+  font-weight:600;
+}
+.score-card .label-wrap .weight{
+  font-size:11px;
+  color:var(--gray);
+  font-weight:500;
+  letter-spacing:0.2px;
+}
+.score-card input{
+  font-family:var(--font);
+  font-size:22px;
+  font-weight:700;
+  text-align:right;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:var(--black);
+  width:100%;
+  padding:4px 0;
+  -moz-appearance:textfield;
+}
+.score-card input::-webkit-outer-spin-button,
+.score-card input::-webkit-inner-spin-button{
+  -webkit-appearance:none;margin:0;
+}
+.score-card input::placeholder{
+  color:#CCC;
+  font-weight:400;
+  font-size:16px;
+}
+.score-card input:focus{
+  color:var(--blue);
+}
+
+/* ── Color dots per card ── */
+.score-card:nth-child(1){border-left:6px solid var(--red)}
+.score-card:nth-child(2){border-left:6px solid var(--yellow)}
+.score-card:nth-child(3){border-left:6px solid var(--blue)}
+.score-card:nth-child(4){border-left:6px solid var(--black)}
+
+/* ── Calculate Button ── */
+.calc-btn{
+  width:100%;
+  padding:14px;
+  background:var(--black);
+  color:var(--white);
+  border:2px solid var(--black);
+  font-family:var(--font);
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:0.5px;
+  cursor:pointer;
+  transition:background 0.15s,color 0.15s;
+  margin-bottom:24px;
+}
+.calc-btn:hover{background:var(--blue);border-color:var(--blue)}
+.calc-btn:active{transform:translateY(1px)}
+
+/* ── Results Panel ── */
+.results{
+  display:none;
+  border:2px solid var(--black);
+  background:var(--white);
+  overflow:hidden;
+}
+.results.show{display:block}
+
+.result-section{
+  padding:16px;
+  border-bottom:1px solid var(--light-gray);
+}
+.result-section:last-child{border-bottom:none}
+
+.result-section .section-title{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+  color:var(--gray);
+  margin-bottom:10px;
+}
+
+/* ── Score Big Display ── */
+.score-big{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:8px;
+  padding:8px 0 4px;
+}
+.score-big .num{
+  font-size:48px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:-1px;
+}
+.score-big .num.pass{color:var(--success)}
+.score-big .num.fail{color:var(--danger)}
+.score-big .denom{
+  font-size:18px;
+  color:var(--gray);
+  font-weight:500;
+}
+
+/* ── Status Badge ── */
+.status-row{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin:4px 0 12px;
+}
+.status-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 16px;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:0.3px;
+  border:2px solid var(--black);
+}
+.status-badge.pass{background:var(--success);color:var(--white);border-color:var(--success)}
+.status-badge.fail{background:var(--danger);color:var(--white);border-color:var(--danger)}
+.status-badge.warn{background:var(--yellow);color:var(--black);border-color:var(--yellow)}
+
+/* ── Grade Bar ── */
+.grade-bar-wrap{
+  margin:8px 0;
+}
+.grade-bar{
+  height:10px;
+  background:var(--light-gray);
+  border:1px solid var(--black);
+  position:relative;
+  overflow:hidden;
+}
+.grade-bar-fill{
+  height:100%;
+  transition:width 0.3s ease;
+}
+.grade-bar-fill.pass{background:var(--success)}
+.grade-bar-fill.fail{background:var(--danger)}
+.grade-bar-fill.warn{background:var(--yellow)}
+.grade-bar-markers{
+  display:flex;
+  justify-content:space-between;
+  font-size:10px;
+  color:var(--gray);
+  font-weight:500;
+  margin-top:4px;
+}
+
+/* ── Key Point ── */
+.key-point{
+  background:var(--cream);
+  border:2px solid var(--black);
+  padding:14px 16px;
+  margin-top:4px;
+  text-align:center;
+}
+.key-point .highlight{
+  font-size:22px;
+  font-weight:800;
+  display:block;
+  margin-bottom:4px;
+}
+.key-point .highlight.green{color:var(--success)}
+.key-point .highlight.red{color:var(--danger)}
+.key-point .highlight.blue{color:var(--blue)}
+.key-point .sub{
+  font-size:12px;
+  color:var(--gray);
+  font-weight:500;
+  line-height:1.5;
+}
+
+/* ── What-if Table ── */
+.whatif-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+  margin-top:8px;
+}
+.whatif-table th{
+  text-align:left;
+  padding:6px 8px;
+  font-size:11px;
+  font-weight:600;
+  color:var(--gray);
+  letter-spacing:0.3px;
+  border-bottom:2px solid var(--black);
+}
+.whatif-table td{
+  padding:6px 8px;
+  border-bottom:1px solid var(--light-gray);
+  font-weight:500;
+}
+.whatif-table tr:last-child td{border-bottom:none}
+.whatif-table .score-pass{color:var(--success);font-weight:700}
+.whatif-table .score-fail{color:var(--danger)}
+.whatif-table .col-pass{text-align:center}
+.whatif-table .col-pass .dot{
+  display:inline-block;
+  width:8px;height:8px;
+}
+.whatif-table .col-pass .dot.pass{background:var(--success)}
+.whatif-table .col-pass .dot.fail{background:var(--danger)}
+
+/* ── Component Breakdown ── */
+.breakdown-list{
+  display:grid;
+  gap:8px;
+}
+.breakdown-item{
+  display:grid;
+  grid-template-columns:1fr 48px 60px;
+  gap:8px;
+  align-items:center;
+  padding:6px 0;
+  font-size:13px;
+}
+.breakdown-item .bar{
+  height:8px;
+  background:var(--light-gray);
+  border:1px solid var(--black);
+  position:relative;
+  overflow:hidden;
+}
+.breakdown-item .bar-fill{
+  height:100%;
+  transition:width 0.3s;
+}
+.breakdown-item .bar-fill.c1{background:var(--red)}
+.breakdown-item .bar-fill.c2{background:var(--yellow)}
+.breakdown-item .bar-fill.c3{background:var(--blue)}
+.breakdown-item .bar-fill.c4{background:var(--black)}
+.breakdown-item .pts{
+  text-align:right;
+  font-weight:600;
+}
+
+/* ── Clear ── */
+.clear-btn{
+  display:block;
+  margin:16px auto 0;
+  background:none;
+  border:none;
+  font-family:var(--font);
+  font-size:12px;
+  color:var(--gray);
+  text-decoration:underline;
+  cursor:pointer;
+  padding:8px;
+}
+.clear-btn:hover{color:var(--red)}
+
+/* ── Footer ── */
+.footer{
+  text-align:center;
+  margin-top:32px;
+  padding-top:16px;
+  border-top:1px solid var(--light-gray);
+  font-size:11px;
+  color:var(--gray);
+  letter-spacing:0.3px;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">G</div>
+    <div>
+      <h1>學期成績計算機</h1>
+      <div class="sub">高中 · 三段制加權</div>
+    </div>
+  </div>
+
+  <!-- Weight Badges -->
+  <div class="weight-badges">
+    <span class="weight-badge"><span class="pct">20%</span> 一段</span>
+    <span class="weight-badge"><span class="pct">20%</span> 二段</span>
+    <span class="weight-badge"><span class="pct">30%</span> 三段</span>
+    <span class="weight-badge"><span class="pct">30%</span> 作業</span>
+  </div>
+
+  <!-- Score Inputs -->
+  <div class="score-group">
+    <div class="score-card">
+      <div class="label-wrap">
+        <span class="name">第一次段考</span>
+        <span class="weight">權重 20%</span>
+      </div>
+      <input type="number" id="s1" min="0" max="100" placeholder="0" inputmode="numeric">
+    </div>
+    <div class="score-card">
+      <div class="label-wrap">
+        <span class="name">第二次段考</span>
+        <span class="weight">權重 20%</span>
+      </div>
+      <input type="number" id="s2" min="0" max="100" placeholder="0" inputmode="numeric">
+    </div>
+    <div class="score-card">
+      <div class="label-wrap">
+        <span class="name">第三次段考</span>
+        <span class="weight">權重 30%</span>
+      </div>
+      <input type="number" id="s3" min="0" max="100" placeholder="0" inputmode="numeric">
+    </div>
+    <div class="score-card">
+      <div class="label-wrap">
+        <span class="name">作業成績</span>
+        <span class="weight">權重 30%</span>
+      </div>
+      <input type="number" id="hw" min="0" max="100" placeholder="0" inputmode="numeric">
+    </div>
+  </div>
+
+  <!-- Calculate -->
+  <button class="calc-btn" id="calcBtn">▸ 計算學期成績</button>
+
+  <!-- Results Panel -->
+  <div class="results" id="results">
+
+    <!-- Weighted Total -->
+    <div class="result-section">
+      <div class="section-title">加權總分</div>
+      <div class="score-big">
+        <span class="num" id="totalScore">0.0</span>
+        <span class="denom">/ 100</span>
+      </div>
+      <div class="status-row">
+        <span class="status-badge" id="statusBadge">—</span>
+      </div>
+      <div class="grade-bar-wrap">
+        <div class="grade-bar">
+          <div class="grade-bar-fill" id="gradeFill" style="width:0%"></div>
+        </div>
+        <div class="grade-bar-markers">
+          <span>0</span>
+          <span style="font-weight:700;color:var(--black)">60 及格</span>
+          <span>100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- What Score on 三段 to Pass -->
+    <div class="result-section">
+      <div class="section-title">三段目標分析</div>
+      <div id="targetAnalysis"></div>
+    </div>
+
+    <!-- What-If Table -->
+    <div class="result-section" id="whatifSection" style="display:none">
+      <div class="section-title">三段模擬（各分數對應總分）</div>
+      <table class="whatif-table">
+        <thead><tr><th>三段得分</th><th>加權總分</th><th></th></tr></thead>
+        <tbody id="whatifBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Score Breakdown -->
+    <div class="result-section">
+      <div class="section-title">各項貢獻</div>
+      <div class="breakdown-list" id="breakdownList"></div>
+    </div>
+
+    <!-- Clear -->
+    <button class="clear-btn" id="clearBtn">清除所有分數</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">加權公式：一段 20% + 二段 20% + 三段 30% + 作業 30%</div>
+
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const s1=$('s1'),s2=$('s2'),s3=$('s3'),hw=$('hw');
+const results=$('results'),calcBtn=$('calcBtn');
+const totalScore=$('totalScore'),statusBadge=$('statusBadge'),gradeFill=$('gradeFill');
+const targetAnalysis=$('targetAnalysis'),breakdownList=$('breakdownList');
+const whatifSection=$('whatifSection'),whatifBody=$('whatifBody'),clearBtn=$('clearBtn');
+
+const W = { s1:0.2, s2:0.2, s3:0.3, hw:0.3 };
+const PASS = 60;
+
+function v(el){const n=parseFloat(el.value);return isNaN(n)?0:Math.min(100,Math.max(0,n))}
+
+function compute(){
+  const a=v(s1),b=v(s2),c=v(s3),d=v(hw);
+  const total = a*W.s1 + b*W.s2 + c*W.s3 + d*W.hw;
+  const passed = total >= PASS;
+
+  const hasS1 = s1.value !== '';
+  const hasS2 = s2.value !== '';
+  const hasS3 = s3.value !== '';
+  const hasHw = hw.value !== '';
+
+  // ── Total Score ──
+  totalScore.textContent = total.toFixed(1);
+  totalScore.className = 'num ' + (passed?'pass':'fail');
+
+  // ── Status ──
+  if(!hasS1 && !hasS2 && !hasS3 && !hasHw){
+    statusBadge.textContent = '請輸入至少一項成績';
+    statusBadge.className = 'status-badge warn';
+  } else {
+    statusBadge.textContent = passed ? '✓ 及格' : '✗ 不及格 · 有被當風險';
+    statusBadge.className = 'status-badge ' + (passed?'pass':'fail');
+  }
+
+  // ── Grade Bar ──
+  const pct = Math.min(total,100);
+  gradeFill.style.width = pct + '%';
+  gradeFill.className = 'grade-bar-fill ' + (passed?'pass':'fail');
+
+  // ── Breakdown ──
+  const items = [
+    {label:'一段',score:a,wgt:W.s1,cls:'c1'},
+    {label:'二段',score:b,wgt:W.s2,cls:'c2'},
+    {label:'三段',score:c,wgt:W.s3,cls:'c3'},
+    {label:'作業',score:d,wgt:W.hw,cls:'c4'},
+  ];
+  breakdownList.innerHTML = items.map(it=>{
+    const contrib = it.score * it.wgt;
+    const barPct = it.score;
+    return '<div class="breakdown-item">'
+      + '<span><strong>'+it.label+'</strong> '+it.score+'分 × '+(it.wgt*100)+'%</span>'
+      + '<div class="bar"><div class="bar-fill '+it.cls+'" style="width:'+barPct+'%"></div></div>'
+      + '<span class="pts">'+contrib.toFixed(1)+'</span>'
+      + '</div>';
+  }).join('');
+
+  // ── What score on 三段 to pass ──
+  const baseNoS3 = a*W.s1 + b*W.s2 + d*W.hw;
+  const cNeeded = (PASS - baseNoS3) / W.s3;
+
+  let html = '';
+  if(!hasS3){
+    if(cNeeded <= 0){
+      html = '<div class="key-point"><span class="highlight green">✓ 已穩過</span>'
+        + '<span class="sub">即使三段 0 分，加權總分也有 '+baseNoS3.toFixed(1)+' 分，確定及格</span></div>';
+    } else if(cNeeded <= 100){
+      html = '<div class="key-point"><span class="highlight blue">三段需考 '+Math.ceil(cNeeded)+' 分</span>'
+        + '<span class="sub">以目前一段、二段、作業成績，三段至少要 <strong>'+Math.ceil(cNeeded)+'</strong> 分才能及格<br>（加權總分 ≥ 60）</span></div>';
+    } else {
+      const maxPossible = baseNoS3 + 100*W.s3;
+      html = '<div class="key-point"><span class="highlight red">⚠ 極度危險</span>'
+        + '<span class="sub">目前僅 '+baseNoS3.toFixed(1)+' 分，即使三段考 100 分最高也只有 '+maxPossible.toFixed(1)+' 分，<strong>確定被當</strong>。請跟老師確認補救措施。</span></div>';
+    }
+  } else {
+    if(passed){
+      html = '<div class="key-point"><span class="highlight green">✓ 目前及格</span>'
+        + '<span class="sub">加權總分 '+total.toFixed(1)+' 分，已達及格標準。</span></div>';
+    } else {
+      if(cNeeded > 100){
+        const maxPossible = baseNoS3 + 100*W.s3;
+        html = '<div class="key-point"><span class="highlight red">⚠ '+total.toFixed(1)+' 分 — 確定被當</span>'
+          + '<span class="sub">即使三段滿分最高也僅 '+maxPossible.toFixed(1)+' 分，不及 60 分門檻。\n請向老師確認補救方案。</span></div>';
+      } else {
+        const diff = Math.max(0, Math.ceil(cNeeded - c));
+        html = '<div class="key-point"><span class="highlight blue">三段目標 '+Math.ceil(cNeeded)+' 分</span>'
+          + '<span class="sub">目前三段考了 '+c+' 分，離目標差 <strong>'+diff+' 分</strong><br>三段需要拿到 <strong>'+Math.ceil(cNeeded)+'</strong> 分才能及格</span></div>';
+      }
+    }
+  }
+  targetAnalysis.innerHTML = html;
+
+  // ── What-If Table ──
+  const baseDefined = hasS1 || hasS2 || hasHw;
+  const showWhatif = baseDefined && !passed;
+  if(showWhatif){
+    whatifSection.style.display = 'block';
+    // If 三段 is already filled, show incremental scenarios from current score
+    let testScores;
+    let sectionLabel;
+    if(!hasS3){
+      testScores = [0,20,40,60,80,100];
+      sectionLabel = '三段模擬（各分數對應總分）';
+    } else {
+      testScores = [c, Math.min(100,c+10), Math.min(100,c+20), Math.min(100,c+30), Math.min(100,c+40), 100];
+      // Deduplicate
+      testScores = [...new Set(testScores)].sort(function(x,y){return x-y});
+      sectionLabel = '三段提高模擬';
+    }
+    whatifSection.querySelector('.section-title').textContent = sectionLabel;
+    // Rebuild table
+    let tableHtml = '<table class="whatif-table"><thead><tr><th>三段得分</th><th>加權總分</th><th></th></tr></thead><tbody>';
+    testScores.forEach(function(sc){
+      const testTotal = baseNoS3 + sc*W.s3;
+      const pass = testTotal >= PASS;
+      const highlight = sc === c ? ' style="background:#FFF3CD"' : '';
+      tableHtml += '<tr'+highlight+'>'
+        + '<td>'+(sc === c ? '▸ '+sc : sc)+'</td>'
+        + '<td class="'+(pass?'score-pass':'score-fail')+'">'+testTotal.toFixed(1)+'</td>'
+        + '<td class="col-pass"><span class="dot '+(pass?'pass':'fail')+'"></span> '+(pass?'及格':'不及格')+'</td>'
+        + '</tr>';
+    });
+    tableHtml += '</tbody></table>';
+    whatifBody.innerHTML = tableHtml;
+  } else {
+    whatifSection.style.display = 'none';
+  }
+
+  results.classList.add('show');
+}
+
+calcBtn.addEventListener('click',compute);
+
+document.querySelectorAll('.score-card input').forEach(function(inp){
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter')compute()});
+  inp.addEventListener('blur',function(){
+    const val = parseFloat(inp.value);
+    if(!isNaN(val)) inp.value = Math.min(100,Math.max(0,Math.round(val)));
+  });
+});
+
+clearBtn.addEventListener('click',function(){
+  [s1,s2,s3,hw].forEach(function(el){el.value=''});
+  results.classList.remove('show');
+  s1.focus();
+});
+
+})();
+</script>
+
+</body>
+</html>
