@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════
-   Linear 暗色發光 Bento · 學期成績計算機
+   Linear 暗色發光 Bento · 學期成績計算機 v2
    ══════════════════════════════════════ */
 
 /* ── Reset ── */
@@ -239,6 +239,62 @@ body{
 .score-cell:nth-child(4){border-left:2px solid rgba(34,197,94,0.3)}
 
 /* ════════════════════════════
+   SETTINGS — 2-col grid
+   ════════════════════════════ */
+.settings-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.settings-cell{
+  background:rgba(255,255,255,0.02);
+  border-radius:var(--radius-md);
+  border:0.5px solid var(--border-subtle);
+  padding:10px 12px;
+  transition:border-color 0.2s;
+}
+.settings-cell:focus-within{
+  border-color:var(--border-active);
+  background:rgba(99,102,241,0.04);
+}
+.settings-cell .label-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:4px;
+}
+.settings-cell .settings-name{
+  font-size:11px;
+  font-weight:500;
+  color:var(--text-secondary);
+}
+.settings-cell input{
+  font-family:var(--font-mono);
+  font-size:18px;
+  font-weight:600;
+  color:var(--accent-light);
+  text-align:right;
+  border:none;
+  outline:none;
+  background:transparent;
+  width:100%;
+  padding:2px 0;
+  -moz-appearance:textfield;
+}
+.settings-cell input::-webkit-outer-spin-button,
+.settings-cell input::-webkit-inner-spin-button{
+  -webkit-appearance:none;margin:0;
+}
+.settings-cell input::placeholder{
+  color:var(--text-tertiary);
+  font-weight:400;
+  font-size:14px;
+}
+/* accent left border per settings cell */
+.settings-cell:nth-child(1){border-left:2px solid rgba(245,158,11,0.4)}
+.settings-cell:nth-child(2){border-left:2px solid rgba(139,92,246,0.4)}
+
+/* ════════════════════════════
    CALCULATE BUTTON
    ════════════════════════════ */
 .calc-btn{
@@ -362,24 +418,45 @@ body{
 
 /* ── Target Analysis ── */
 .target-card{
+  padding:4px 0;
+}
+.target-row{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  padding:8px 0;
+}
+.target-row+.target-row{
+  border-top:0.5px solid rgba(255,255,255,0.04);
+}
+.target-row .target-icon{
+  font-size:12px;
+  flex-shrink:0;
+  width:16px;
   text-align:center;
-  padding:10px 0 4px;
 }
-.target-card .big-number{
+.target-row .target-label{
+  font-size:11px;
+  color:var(--text-tertiary);
+  font-weight:500;
+  white-space:nowrap;
+  min-width:50px;
+}
+.target-row .target-value{
   font-family:var(--font-mono);
-  font-size:32px;
+  font-size:18px;
   font-weight:700;
-  display:block;
-  margin-bottom:4px;
+  min-width:60px;
 }
-.target-card .big-number.blue{color:var(--accent-light)}
-.target-card .big-number.green{color:var(--success)}
-.target-card .big-number.red{color:var(--danger)}
-.target-card .desc{
-  font-size:13px;
+.target-row .target-value.blue{color:var(--accent-light)}
+.target-row .target-value.green{color:var(--success)}
+.target-row .target-value.red{color:var(--danger)}
+.target-row .target-value.purple{color:var(--purple)}
+.target-row .target-desc{
+  font-size:11px;
   color:var(--text-secondary);
-  line-height:1.6;
   font-weight:400;
+  line-height:1.4;
 }
 
 /* ── What-If Table ── */
@@ -509,7 +586,7 @@ body{
   <!-- ═══ BENTO ═══ -->
   <div class="bento">
 
-    <!-- Card 1: Score Inputs (2×2) -->
+    <!-- Card 1: Score Inputs (2x2) -->
     <div class="bento-card">
       <div class="bento-card-title">成績輸入</div>
       <div class="score-grid">
@@ -544,13 +621,32 @@ body{
       </div>
     </div>
 
-    <!-- Card 2: Weight Summary (ribbon) -->
+    <!-- Card 2: Weight Summary -->
     <div class="bento-card bento-card-tight">
       <div class="weight-row">
         <span class="weight-chip"><span class="pct">20%</span><span class="label">一段</span></span>
         <span class="weight-chip"><span class="pct">20%</span><span class="label">二段</span></span>
         <span class="weight-chip"><span class="pct">30%</span><span class="label">三段</span></span>
         <span class="weight-chip"><span class="pct">30%</span><span class="label">作業</span></span>
+      </div>
+    </div>
+
+    <!-- Card 3: Settings (pass threshold + target score) -->
+    <div class="bento-card" id="settingsCard">
+      <div class="bento-card-title">設定</div>
+      <div class="settings-grid">
+        <div class="settings-cell">
+          <div class="label-row">
+            <span class="settings-name">及格門檻</span>
+          </div>
+          <input type="number" id="passThreshold" min="0" max="100" value="60" inputmode="numeric">
+        </div>
+        <div class="settings-cell">
+          <div class="label-row">
+            <span class="settings-name">目標分數</span>
+          </div>
+          <input type="number" id="targetScore" min="0" max="100" value="80" inputmode="numeric">
+        </div>
       </div>
     </div>
 
@@ -573,19 +669,17 @@ body{
             </div>
             <div class="grade-markers">
               <span>0</span>
-              <span class="pass-line">60 及格線</span>
+              <span class="pass-line" id="passLabel">60 及格線</span>
               <span>100</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Target Analysis -->
+      <!-- Target Analysis (dual mode) -->
       <div class="bento-card">
         <div class="bento-card-title">三段目標分析</div>
-        <div class="target-card" id="targetAnalysis">
-          <span class="big-number blue">—</span>
-        </div>
+        <div class="target-card" id="targetAnalysis"></div>
       </div>
 
       <!-- What-If Table -->
@@ -616,146 +710,290 @@ body{
 
 <script>
 (function(){
-const $=id=>document.getElementById(id);
-const s1=$('s1'),s2=$('s2'),s3=$('s3'),hw=$('hw');
-const results=$('results'),calcBtn=$('calcBtn');
-const totalScore=$('totalScore'),statusBadge=$('statusBadge'),gradeFill=$('gradeFill'),gradeLine=$('gradeLine');
-const targetAnalysis=$('targetAnalysis'),breakdownList=$('breakdownList');
-const whatifSection=$('whatifSection'),whatifBody=$('whatifBody'),clearBtn=$('clearBtn');
+'use strict';
 
-const W={s1:0.2,s2:0.2,s3:0.3,hw:0.3};
-const PASS=60;
+/* ── Constants ── */
+const STORAGE_KEY = 'scorecalcv2_data';
+const W = { s1: 0.2, s2: 0.2, s3: 0.3, hw: 0.3 };
 
-function v(el){const n=parseFloat(el.value);return isNaN(n)?0:Math.min(100,Math.max(0,n))}
-function has(el){return el.value!==''}
+/* ── DOM refs ── */
+const $ = id => document.getElementById(id);
+const s1 = $('s1'), s2 = $('s2'), s3 = $('s3'), hw = $('hw');
+const passInput = $('passThreshold'), targetInput = $('targetScore');
+const results = $('results'), calcBtn = $('calcBtn');
+const totalScore = $('totalScore'), statusBadge = $('statusBadge');
+const gradeFill = $('gradeFill'), gradeLine = $('gradeLine'), passLabel = $('passLabel');
+const targetAnalysis = $('targetAnalysis'), breakdownList = $('breakdownList');
+const whatifSection = $('whatifSection'), whatifBody = $('whatifBody'), clearBtn = $('clearBtn');
 
-function compute(){
-  const a=v(s1),b=v(s2),c=v(s3),d=v(hw);
-  const total=a*W.s1+b*W.s2+c*W.s3+d*W.hw;
-  const passed=total>=PASS;
-  const baseNoS3=a*W.s1+b*W.s2+d*W.hw;
-  const cNeeded=(PASS-baseNoS3)/W.s3;
-  const hS1=has(s1),hS2=has(s2),hS3=has(s3),hHw=has(hw);
-  const anyInput=hS1||hS2||hS3||hHw;
+/* ── Utilities ── */
+function v(el) {
+  const n = parseFloat(el.value);
+  return isNaN(n) ? 0 : Math.min(100, Math.max(0, n));
+}
+function has(el) { return el.value !== ''; }
+function clamp(val, min, max) { return Math.min(max, Math.max(min, val)); }
 
-  // ── Total Score ──
-  totalScore.textContent=total.toFixed(1);
-  totalScore.className='score-num '+(passed?'pass':'fail');
+/* ── localStorage helpers ── */
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data || typeof data !== 'object') return null;
+    return data;
+  } catch (e) {
+    console.warn('[loadData] parse failed:', e);
+    return null;
+  }
+}
 
-  // ── Status ──
-  if(!anyInput){
-    statusBadge.textContent='請輸入至少一項成績';
-    statusBadge.className='status-badge warn';
-  }else{
-    statusBadge.textContent=passed?'及格 ✓':'不及格 · 有被當風險';
-    statusBadge.className='status-badge '+(passed?'pass':'fail');
+function saveData(extra) {
+  try {
+    const data = loadData() || { version: 1 };
+    Object.assign(data, extra);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.warn('[saveData] failed:', e);
+  }
+}
+
+function restoreInputs() {
+  const data = loadData();
+  if (!data) return;
+  // Restore last input scores
+  if (data.lastInput) {
+    const li = data.lastInput;
+    if (li.s1 !== null && li.s1 !== undefined) s1.value = li.s1;
+    if (li.s2 !== null && li.s2 !== undefined) s2.value = li.s2;
+    if (li.s3 !== null && li.s3 !== undefined) s3.value = li.s3;
+    if (li.hw !== null && li.hw !== undefined) hw.value = li.hw;
+  }
+  // Restore pass threshold
+  if (data.passThreshold !== undefined && data.passThreshold !== null) {
+    passInput.value = clamp(data.passThreshold, 0, 100);
+  }
+  // Restore target score
+  if (data.targetScore !== undefined && data.targetScore !== null) {
+    targetInput.value = clamp(data.targetScore, 0, 100);
+  }
+}
+
+/* ── Core compute ── */
+function compute() {
+  const a = v(s1), b = v(s2), c = v(s3), d = v(hw);
+  const PASS = v(passInput) || 60;
+  const TARGET = v(targetInput) || 80;
+
+  const total = a * W.s1 + b * W.s2 + c * W.s3 + d * W.hw;
+  const passed = total >= PASS;
+  const baseNoS3 = a * W.s1 + b * W.s2 + d * W.hw;
+  const cNeeded = (PASS - baseNoS3) / W.s3;
+  const tNeeded = (TARGET - baseNoS3) / W.s3;
+  const hS1 = has(s1), hS2 = has(s2), hS3 = has(s3), hHw = has(hw);
+  const anyInput = hS1 || hS2 || hS3 || hHw;
+
+  /* ── Total Score ── */
+  totalScore.textContent = total.toFixed(1);
+  totalScore.className = 'score-num ' + (passed ? 'pass' : 'fail');
+
+  /* ── Status ── */
+  if (!anyInput) {
+    statusBadge.textContent = '請輸入至少一項成績';
+    statusBadge.className = 'status-badge warn';
+  } else {
+    statusBadge.textContent = passed
+      ? ('及格 ✓ · ' + PASS + ' 分門檻已達')
+      : ('不及格 · 低於 ' + PASS + ' 分門檻');
+    statusBadge.className = 'status-badge ' + (passed ? 'pass' : 'fail');
   }
 
-  // ── Grade Bar ──
-  const pct=Math.min(total,100);
-  gradeFill.style.width=pct+'%';
-  gradeFill.className='grade-bar-fill '+(passed?'pass':'fail');
-  // 60% line
-  gradeLine.style.left='60%';
+  /* ── Grade Bar (dynamic pass line) ── */
+  const pct = Math.min(total, 100);
+  gradeFill.style.width = pct + '%';
+  gradeFill.className = 'grade-bar-fill ' + (passed ? 'pass' : 'fail');
+  gradeLine.style.left = PASS + '%';
+  passLabel.textContent = PASS + ' 及格線';
 
-  // ── Breakdown ──
-  const items=[
-    {label:'一段',score:a,wgt:W.s1,cls:'c1'},
-    {label:'二段',score:b,wgt:W.s2,cls:'c2'},
-    {label:'三段',score:c,wgt:W.s3,cls:'c3'},
-    {label:'作業',score:d,wgt:W.hw,cls:'c4'},
+  /* ── Breakdown ── */
+  const items = [
+    { label: '一段', score: a, wgt: W.s1, cls: 'c1' },
+    { label: '二段', score: b, wgt: W.s2, cls: 'c2' },
+    { label: '三段', score: c, wgt: W.s3, cls: 'c3' },
+    { label: '作業', score: d, wgt: W.hw, cls: 'c4' },
   ];
-  breakdownList.innerHTML=items.map(it=>{
-    const contrib=it.score*it.wgt;
+  breakdownList.innerHTML = items.map(function(it) {
+    const contrib = it.score * it.wgt;
     return '<div class="breakdown-item">'
-      +'<span class="b-label"><strong>'+it.label+'</strong> '+it.score+'分</span>'
-      +'<div class="b-bar"><div class="b-fill '+it.cls+'" style="width:'+it.score+'%"></div></div>'
-      +'<span class="b-pts">'+contrib.toFixed(1)+'</span>'
-      +'</div>';
+      + '<span class="b-label"><strong>' + it.label + '</strong> ' + it.score + '分</span>'
+      + '<div class="b-bar"><div class="b-fill ' + it.cls + '" style="width:' + it.score + '%"></div></div>'
+      + '<span class="b-pts">' + contrib.toFixed(1) + '</span>'
+      + '</div>';
   }).join('');
 
-  // ── Target Analysis ──
-  let thtml='';
-  if(!hS3){
-    if(cNeeded<=0){
-      thtml='<span class="big-number green">✓ 已穩過</span>'
-        +'<div class="desc">即使三段 0 分，加權總分仍有 '+baseNoS3.toFixed(1)+' 分，確定及格。</div>';
-    }else if(cNeeded<=100){
-      thtml='<span class="big-number blue">三段需考 '+Math.ceil(cNeeded)+' 分</span>'
-        +'<div class="desc">以目前一段、二段、作業成績推算，三段至少要 <strong>'+Math.ceil(cNeeded)+'</strong> 分才能及格（加權總分 ≥ 60）。</div>';
-    }else{
-      const maxP=baseNoS3+100*W.s3;
-      thtml='<span class="big-number red">⚠ 極度危險</span>'
-        +'<div class="desc">目前僅 '+baseNoS3.toFixed(1)+' 分，即使三段滿分最高也只有 '+maxP.toFixed(1)+' 分。請與老師確認補救措施。</div>';
+  /* ── Target Analysis — Dual Mode ── */
+  var thtml = '';
+
+  // --- Mode A: Pass threshold analysis ---
+  thtml += '<div class="target-row">';
+  thtml += '<span class="target-icon">🎯</span>';
+  thtml += '<span class="target-label">及格</span>';
+  if (!hS3) {
+    if (cNeeded <= 0) {
+      // Already safe even with 0
+      thtml += '<span class="target-value green">✓ 已穩過</span>';
+      thtml += '<span class="target-desc">即使三段 0 分也有 ' + baseNoS3.toFixed(1) + ' 分</span>';
+    } else if (cNeeded <= 100) {
+      thtml += '<span class="target-value blue">需考 ' + Math.ceil(cNeeded) + ' 分</span>';
+      thtml += '<span class="target-desc">三段 ≥ ' + Math.ceil(cNeeded) + ' 分才及格 (' + PASS + ' 分)</span>';
+    } else {
+      var maxP = baseNoS3 + 100 * W.s3;
+      thtml += '<span class="target-value red">⚠ 極度危險</span>';
+      thtml += '<span class="target-desc">最高僅 ' + maxP.toFixed(1) + ' 分，請補救</span>';
     }
-  }else{
-    if(passed){
-      thtml='<span class="big-number green">✓ 目前及格</span>'
-        +'<div class="desc">加權總分 '+total.toFixed(1)+' 分，已達 60 分及格標準。</div>';
-    }else{
-      const maxP=baseNoS3+100*W.s3;
-      if(maxP<PASS){
-        thtml='<span class="big-number red">⚠ '+total.toFixed(1)+' 分 — 確定被當</span>'
-          +'<div class="desc">即使三段滿分最高也僅 '+maxP.toFixed(1)+' 分。請向老師確認補救方案。</div>';
-      }else{
-        const diff=Math.max(0,Math.ceil(cNeeded-c));
-        thtml='<span class="big-number blue">三段需達 '+Math.ceil(cNeeded)+' 分</span>'
-          +'<div class="desc">目前三段 '+c+' 分，離目標差 <strong>'+diff+' 分</strong>。<br>三段需拿到 <strong>'+Math.ceil(cNeeded)+'</strong> 分才能及格。</div>';
+  } else {
+    if (passed) {
+      thtml += '<span class="target-value green">✓ ' + total.toFixed(1) + ' 分</span>';
+      thtml += '<span class="target-desc">已達 ' + PASS + ' 分及格門檻</span>';
+    } else {
+      var need = Math.ceil(cNeeded);
+      var diff = Math.max(0, need - c);
+      thtml += '<span class="target-value red">離及格差 ' + diff + ' 分</span>';
+      thtml += '<span class="target-desc">三段需達 ' + need + ' 分 (目前 ' + c + ' 分)</span>';
+    }
+  }
+  thtml += '</div>';
+
+  // --- Mode B: Target score analysis ---
+  thtml += '<div class="target-row">';
+  thtml += '<span class="target-icon">🏆</span>';
+  thtml += '<span class="target-label">目標</span>';
+
+  if (TARGET <= PASS) {
+    // Target is not meaningful — same or below pass threshold
+    thtml += '<span class="target-value purple">—</span>';
+    thtml += '<span class="target-desc">目標分數不高於及格門檻，請調整</span>';
+  } else if (!hS3) {
+    if (tNeeded <= 0) {
+      thtml += '<span class="target-value green">✓ 已達標</span>';
+      thtml += '<span class="target-desc">即使三段 0 分也已達 ' + TARGET + ' 分</span>';
+    } else if (tNeeded <= 100) {
+      thtml += '<span class="target-value purple">需考 ' + Math.ceil(tNeeded) + ' 分</span>';
+      thtml += '<span class="target-desc">三段 ≥ ' + Math.ceil(tNeeded) + ' 分達目標 ' + TARGET + ' 分</span>';
+    } else {
+      var maxPT = baseNoS3 + 100 * W.s3;
+      if (maxPT >= TARGET) {
+        thtml += '<span class="target-value purple">需考 ' + Math.ceil(tNeeded) + ' 分</span>';
+        thtml += '<span class="target-desc">三段需 ' + Math.ceil(tNeeded) + ' 分達目標 ' + TARGET + ' 分</span>';
+      } else {
+        thtml += '<span class="target-value red">⚠ 無法達標</span>';
+        thtml += '<span class="target-desc">最高僅 ' + maxPT.toFixed(1) + ' 分，低於 ' + TARGET + ' 分</span>';
+      }
+    }
+  } else {
+    var checkTotal = a * W.s1 + b * W.s2 + c * W.s3 + d * W.hw;
+    if (checkTotal >= TARGET) {
+      thtml += '<span class="target-value green">✓ ' + checkTotal.toFixed(1) + ' 分</span>';
+      thtml += '<span class="target-desc">已達目標 ' + TARGET + ' 分</span>';
+    } else {
+      var tNeed = Math.ceil(tNeeded);
+      var tDiff = Math.max(0, tNeed - c);
+      var maxPTotal = baseNoS3 + 100 * W.s3;
+      if (maxPTotal >= TARGET) {
+        thtml += '<span class="target-value purple">離目標差 ' + tDiff + ' 分</span>';
+        thtml += '<span class="target-desc">三段需達 ' + tNeed + ' 分 (目前 ' + c + ' 分)</span>';
+      } else {
+        thtml += '<span class="target-value red">⚠ 無法達標</span>';
+        thtml += '<span class="target-desc">最高僅 ' + maxPTotal.toFixed(1) + ' 分</span>';
       }
     }
   }
-  targetAnalysis.innerHTML=thtml;
+  thtml += '</div>';
 
-  // ── What-If Table ──
-  const baseDefined=hS1||hS2||hHw;
-  const showWhatif=baseDefined&&!passed;
-  if(showWhatif){
+  targetAnalysis.innerHTML = thtml;
+
+  /* ── What-If Table ── */
+  var baseDefined = hS1 || hS2 || hHw;
+  var showWhatif = baseDefined && !passed;
+  if (showWhatif) {
     whatifSection.classList.remove('hidden');
-    let testScores,sectionLabel;
-    if(!hS3){
-      testScores=[0,20,40,60,80,100];
-      sectionLabel='三段各分數模擬';
-    }else{
-      testScores=[];
-      for(let x=c;x<=100;x+=10) testScores.push(Math.min(100,x));
-      testScores=[...new Set(testScores)].sort((a,b)=>a-b);
-      if(testScores[testScores.length-1]!==100&&testScores[testScores.length-1]<100) testScores.push(100);
-      sectionLabel='三段提高模擬';
+    var testScores;
+    if (!hS3) {
+      testScores = [0, 20, 40, 60, 80, 100];
+      whatifSection.querySelector('.bento-card-title').textContent = '三段模擬';
+    } else {
+      testScores = [];
+      for (var x = c; x <= 100; x += 10) testScores.push(Math.min(100, x));
+      testScores = [...new Set(testScores)].sort(function(a2, b2) { return a2 - b2; });
+      if (testScores[testScores.length - 1] !== 100 && testScores[testScores.length - 1] < 100) testScores.push(100);
+      whatifSection.querySelector('.bento-card-title').textContent = '三段提高模擬';
     }
-    whatifSection.querySelector('.bento-card-title').textContent=sectionLabel;
-    whatifBody.innerHTML=testScores.map(sc=>{
-      const testTotal=baseNoS3+sc*W.s3;
-      const pass=testTotal>=PASS;
-      const hl=sc===c?' class="highlight"':'';
-      return '<tr'+hl+'>'
-        +'<td>'+(sc===c?'▸ '+sc:sc)+'</td>'
-        +'<td class="'+(pass?'pass':'fail')+'">'+testTotal.toFixed(1)+'</td>'
-        +'<td class="col-status '+(pass?'pass':'fail')+'">'+(pass?'及格':'不及格')+'</td>'
-        +'</tr>';
+    whatifBody.innerHTML = testScores.map(function(sc) {
+      var testTotal = baseNoS3 + sc * W.s3;
+      var p = testTotal >= PASS;
+      var hl = sc === c ? ' class="highlight"' : '';
+      return '<tr' + hl + '>'
+        + '<td>' + (sc === c ? '▸ ' + sc : sc) + '</td>'
+        + '<td class="' + (p ? 'pass' : 'fail') + '">' + testTotal.toFixed(1) + '</td>'
+        + '<td class="col-status ' + (p ? 'pass' : 'fail') + '">' + (p ? '及格' : '不及格') + '</td>'
+        + '</tr>';
     }).join('');
-  }else{
+  } else {
     whatifSection.classList.add('hidden');
   }
 
   results.classList.remove('hidden');
+
+  /* ── Auto-save to localStorage ── */
+  saveData({
+    passThreshold: PASS,
+    targetScore: TARGET,
+    lastInput: { s1: a, s2: b, s3: c, hw: d },
+  });
 }
 
-// ── Events ──
-calcBtn.addEventListener('click',compute);
+/* ── Events ── */
+calcBtn.addEventListener('click', compute);
 
-document.querySelectorAll('.score-cell input').forEach(inp=>{
-  inp.addEventListener('keydown',e=>{if(e.key==='Enter')compute()});
-  inp.addEventListener('blur',()=>{
-    const val=parseFloat(inp.value);
-    if(!isNaN(val)) inp.value=Math.min(100,Math.max(0,Math.round(val)));
+document.querySelectorAll('.score-cell input').forEach(function(inp) {
+  inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') compute(); });
+  inp.addEventListener('blur', function() {
+    var val = parseFloat(inp.value);
+    if (!isNaN(val)) inp.value = Math.min(100, Math.max(0, Math.round(val)));
   });
 });
 
-clearBtn.addEventListener('click',()=>{
-  [s1,s2,s3,hw].forEach(el=>{el.value=''});
+// Settings change: auto-recompute if results are showing
+function onSettingChange() {
+  var el = results;
+  if (!el.classList.contains('hidden')) {
+    compute();
+  }
+}
+passInput.addEventListener('change', onSettingChange);
+targetInput.addEventListener('change', onSettingChange);
+passInput.addEventListener('blur', function() {
+  passInput.value = clamp(v(passInput), 0, 100);
+  onSettingChange();
+});
+targetInput.addEventListener('blur', function() {
+  targetInput.value = clamp(v(targetInput), 0, 100);
+  onSettingChange();
+});
+
+clearBtn.addEventListener('click', function() {
+  [s1, s2, s3, hw].forEach(function(el) { el.value = ''; });
   results.classList.add('hidden');
   s1.focus();
 });
+
+/* ── Init: restore from localStorage ── */
+restoreInputs();
+
+// Log verification
+console.log('[ScoreCalc v2] Phase 1 loaded. STORAGE_KEY=' + STORAGE_KEY);
+var initData = loadData();
+console.log('[ScoreCalc v2] localStorage data:', initData);
 
 })();
 </script>
