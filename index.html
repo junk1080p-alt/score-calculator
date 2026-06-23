@@ -873,6 +873,130 @@ body{
 body.mode-overview .subject-mode{display:none}
 body.mode-overview .overview-mode{display:block}
 
+/* ══════════════════════════════════════
+   HISTORY + TREND CHART
+   ══════════════════════════════════════ */
+.history-toggle{
+  display:block;
+  width:100%;
+  padding:10px;
+  background:rgba(255,255,255,0.02);
+  border:0.5px solid var(--border-subtle);
+  border-radius:var(--radius-md);
+  color:var(--text-secondary);
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  transition:color 0.2s,background 0.2s,border-color 0.2s;
+  text-align:center;
+  white-space:nowrap;
+}
+.history-toggle:hover{
+  color:var(--accent-light);
+  border-color:var(--border-active);
+  background:rgba(99,102,241,0.05);
+}
+.history-toggle .arrow{transition:transform 0.25s;display:inline-block}
+.history-toggle .arrow.open{transform:rotate(180deg)}
+
+.history-content{
+  display:none;
+  flex-direction:column;
+  gap:12px;
+}
+.history-content.open{display:flex}
+
+.history-summary{
+  font-size:11px;
+  color:var(--text-tertiary);
+  text-align:center;
+  font-weight:400;
+  padding:2px 0;
+}
+
+.history-list{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  max-height:240px;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,0.08) transparent;
+}
+.history-list::-webkit-scrollbar{width:3px}
+.history-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+
+.history-item{
+  display:grid;
+  grid-template-columns:56px 1fr 50px;
+  gap:8px;
+  align-items:center;
+  padding:7px 10px;
+  border-radius:var(--radius-sm);
+  background:rgba(255,255,255,0.01);
+  border:0.5px solid transparent;
+  cursor:pointer;
+  transition:background 0.15s,border-color 0.15s;
+}
+.history-item:hover{
+  background:rgba(99,102,241,0.05);
+  border-color:var(--border-active);
+}
+.history-item:active{background:rgba(99,102,241,0.08)}
+.history-item .h-date{
+  font-size:10px;
+  color:var(--text-tertiary);
+  font-family:var(--font-mono);
+  white-space:nowrap;
+}
+.history-item .h-scores{
+  font-size:10px;
+  color:var(--text-secondary);
+  font-family:var(--font-mono);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.history-item .h-total{
+  font-size:14px;
+  font-weight:700;
+  font-family:var(--font-mono);
+  text-align:right;
+  letter-spacing:-0.3px;
+}
+.history-item .h-total.pass{color:var(--success)}
+.history-item .h-total.fail{color:var(--danger)}
+
+.history-empty{
+  text-align:center;
+  padding:20px 10px;
+  font-size:12px;
+  color:var(--text-tertiary);
+  font-weight:400;
+}
+
+/* ── Trend Chart ── */
+.trend-chart-wrap{
+  background:rgba(255,255,255,0.02);
+  border-radius:var(--radius-md);
+  border:0.5px solid var(--border-subtle);
+  padding:10px 12px 6px;
+}
+.trend-chart-wrap .tc-title{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.6px;
+  text-transform:uppercase;
+  color:var(--text-tertiary);
+  margin-bottom:8px;
+}
+.trend-chart-wrap svg{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
 /* ── Utility ── */
 .hidden{display:none !important}
 </style>
@@ -1004,6 +1128,22 @@ body.mode-overview .overview-mode{display:block}
         <div class="bento-card-title">各項貢獻細項</div>
         <div class="breakdown-list" id="breakdownList"></div>
       </div>
+
+      <!-- History + Trend Card -->
+      <div class="bento-card" id="historyCard">
+        <button class="history-toggle" id="historyToggle">
+          <span class="arrow">▾</span>&ensp;計算歷史記錄
+        </button>
+        <div class="history-content" id="historyContent">
+          <div class="trend-chart-wrap" id="trendChartWrap">
+            <div class="tc-title">加權總分趨勢</div>
+            <svg id="trendChart" viewBox="0 0 280 110" xmlns="http://www.w3.org/2000/svg" style="overflow:visible"></svg>
+          </div>
+          <div class="history-summary" id="historySummary"></div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+      </div>
+
       <button class="clear-btn" id="clearBtn">清除所有分數</button>
     </div>
   </div>
@@ -1361,6 +1501,10 @@ function switchToSubject(name) {
   DATA.activeSubject = name;
   results.classList.add('hidden');
 
+  // Reset history panel for new subject
+  historyContent.classList.remove('open');
+  historyToggle.querySelector('.arrow').classList.remove('open');
+
   // Load new subject's scores
   loadSubjectScores(name);
 
@@ -1559,6 +1703,14 @@ function compute() {
 
   results.classList.remove('hidden');
 
+  // Save to history
+  if (anyInput) {
+    saveToHistory(DATA.activeSubject, hS1 ? a : null, hS2 ? b : null, hS3 ? c : null, hHw ? d : null, total);
+  }
+
+  // Render history for current subject
+  renderHistory(DATA.activeSubject);
+
   // Save current scores + settings to subject
   saveCurrentScores();
   DATA.passThreshold = PASS;
@@ -1567,6 +1719,179 @@ function compute() {
 
   // Update overview if visible
   if (isOverview) renderOverview();
+}
+
+/* ══════════════════════════════════════
+   History + Trend Chart
+   ══════════════════════════════════════ */
+var HISTORY_MAX = 50;
+var historyToggle = $('historyToggle');
+var historyContent = $('historyContent');
+var historyList = $('historyList');
+var historySummary = $('historySummary');
+var trendChart = $('trendChart');
+
+function saveToHistory(name, s1v, s2v, s3v, hwv, total) {
+  if (!name || !DATA.subjects[name]) return;
+
+  var sub = DATA.subjects[name];
+  if (!sub.history) sub.history = [];
+
+  sub.history.push({
+    date: new Date().toISOString(),
+    s1: s1v,
+    s2: s2v,
+    s3: s3v,
+    hw: hwv,
+    total: Math.round(total * 10) / 10
+  });
+
+  // Trim to max
+  if (sub.history.length > HISTORY_MAX) {
+    sub.history = sub.history.slice(sub.history.length - HISTORY_MAX);
+  }
+
+  // Also update breakdown inputs for history link
+  sub._lastS1 = s1v;
+  sub._lastS2 = s2v;
+  sub._lastS3 = s3v;
+  sub._lastHw = hwv;
+}
+
+function getSubjectHistory(name) {
+  if (!name || !DATA.subjects[name]) return [];
+  var sub = DATA.subjects[name];
+  return sub.history || [];
+}
+
+function renderHistory(name) {
+  var history = getSubjectHistory(name);
+  var isOpen = historyContent.classList.contains('open');
+
+  // Summary
+  if (history.length > 0) {
+    historySummary.textContent = '共 ' + history.length + ' 筆記錄' + (history.length >= HISTORY_MAX ? '（已達上限）' : '');
+  } else {
+    historySummary.textContent = '';
+  }
+
+  // List
+  if (history.length === 0) {
+    historyList.innerHTML = '<div class="history-empty">尚無計算歷史<br>輸入成績並計算後會自動記錄</div>';
+    // Hide trend chart when no data
+    var tw = document.getElementById('trendChartWrap');
+    if (tw) tw.style.display = 'none';
+    return;
+  }
+
+  var tw = document.getElementById('trendChartWrap');
+  if (tw) tw.style.display = 'block';
+
+  // Show newest first
+  var reversed = history.slice().reverse();
+
+  historyList.innerHTML = reversed.map(function(entry, idx) {
+    var realIdx = history.length - 1 - idx;
+    var d = new Date(entry.date);
+    var dateStr = pad(d.getMonth() + 1) + '/' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    var scoresStr = (entry.s1 !== null ? entry.s1 : '-') + '/' + (entry.s2 !== null ? entry.s2 : '-') + '/' + (entry.s3 !== null ? entry.s3 : '-') + '/' + (entry.hw !== null ? entry.hw : '-');
+    var pass = entry.total >= (DATA.passThreshold || 60);
+    return '<div class="history-item" data-idx="' + realIdx + '">'
+      + '<span class="h-date">' + dateStr + '</span>'
+      + '<span class="h-scores">' + scoresStr + '</span>'
+      + '<span class="h-total ' + (pass ? 'pass' : 'fail') + '">' + entry.total.toFixed(1) + '</span>'
+      + '</div>';
+  }).join('');
+
+  // Render trend chart
+  renderTrendChart(history);
+}
+
+function pad(n) {
+  return n < 10 ? '0' + n : '' + n;
+}
+
+function renderTrendChart(history) {
+  if (!history || history.length < 2) {
+    // Not enough data for a line chart
+    if (history && history.length === 1) {
+      // Show a single point
+      trendChart.innerHTML = ''
+        + '<text x="140" y="60" text-anchor="middle" fill="var(--text-tertiary)" font-size="10" font-family="JetBrains Mono,monospace">僅 1 筆記錄，累積更多後顯示趨勢</text>';
+    } else {
+      trendChart.innerHTML = '';
+    }
+    return;
+  }
+
+  var W = 280, H = 110;
+  var padL = 30, padR = 10, padT = 10, padB = 22;
+  var chartW = W - padL - padR;
+  var chartH = H - padT - padB;
+
+  var PASS = DATA.passThreshold || 60;
+
+  // Use last 10 entries
+  var data = history.slice(-10);
+  var n = data.length;
+  var maxVal = 100;
+  var minVal = 0;
+
+  var points = data.map(function(d, i) {
+    var x = padL + (i / (n - 1)) * chartW;
+    var y = padT + chartH - (d.total / maxVal) * chartH;
+    return { x: x, y: y, total: d.total, idx: i };
+  });
+
+  // Pass threshold Y
+  var passY = padT + chartH - (PASS / maxVal) * chartH;
+
+  // Build SVG
+  var pathD = points.map(function(p, i) {
+    return (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ' ' + p.y.toFixed(1);
+  }).join(' ');
+
+  // Grid lines
+  var gridHtml = '';
+  for (var g = 0; g <= 100; g += 20) {
+    var gy = padT + chartH - (g / maxVal) * chartH;
+    gridHtml += '<line x1="' + padL + '" y1="' + gy.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + gy.toFixed(1) + '" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>';
+    gridHtml += '<text x="' + (padL - 4) + '" y="' + (gy + 3).toFixed(1) + '" text-anchor="end" fill="var(--text-tertiary)" font-size="8" font-family="JetBrains Mono,monospace">' + g + '</text>';
+  }
+
+  // Pass threshold line
+  gridHtml += '<line x1="' + padL + '" y1="' + passY.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + passY.toFixed(1) + '" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>';
+
+  // Area fill gradient
+  var areaD = pathD + ' L' + points[n - 1].x.toFixed(1) + ' ' + (padT + chartH) + ' L' + points[0].x.toFixed(1) + ' ' + (padT + chartH) + ' Z';
+
+  var fillId = 'trendFill_' + Date.now();
+
+  trendChart.innerHTML = ''
+    + '<defs>'
+    + '<linearGradient id="' + fillId + '" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0%" stop-color="var(--accent)" stop-opacity="0.3"/>'
+    + '<stop offset="100%" stop-color="var(--accent)" stop-opacity="0.02"/>'
+    + '</linearGradient>'
+    + '</defs>'
+    + gridHtml
+    // Area fill
+    + '<path d="' + areaD + '" fill="url(#' + fillId + ')" stroke="none"/>'
+    // Line
+    + '<path d="' + pathD + '" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    // Glow line
+    + '<path d="' + pathD + '" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.15"/>'
+    // Dots
+    + points.map(function(p) {
+        return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="3" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.5"/>';
+      }).join('')
+    // Last dot highlight
+    + '<circle cx="' + points[n - 1].x.toFixed(1) + '" cy="' + points[n - 1].y.toFixed(1) + '" r="4" fill="var(--accent)" stroke="var(--bg-card)" stroke-width="1.5" opacity="0.8"/>'
+    // Labels on x axis
+    + data.map(function(d, i) {
+        var x = points[i].x;
+        return '<text x="' + x.toFixed(1) + '" y="' + (H - 4) + '" text-anchor="middle" fill="var(--text-tertiary)" font-size="7" font-family="JetBrains Mono,monospace" opacity="0.7">' + (i + 1) + '</text>';
+      }).join('');
 }
 
 /* ══════════════════════════════════════
@@ -1719,6 +2044,45 @@ document.addEventListener('click', function(e) {
     if (name) handleDeleteSubject(name);
     return;
   }
+});
+
+/* ══════════════════════════════════════
+   History event listeners
+   ══════════════════════════════════════ */
+historyToggle.addEventListener('click', function() {
+  var isOpen = historyContent.classList.contains('open');
+  if (isOpen) {
+    historyContent.classList.remove('open');
+    historyToggle.querySelector('.arrow').classList.remove('open');
+  } else {
+    historyContent.classList.add('open');
+    historyToggle.querySelector('.arrow').classList.add('open');
+    // Render history when opening
+    if (DATA.activeSubject) renderHistory(DATA.activeSubject);
+  }
+});
+
+// Click on history item → restore scores
+historyList.addEventListener('click', function(e) {
+  var item = e.target.closest('.history-item');
+  if (!item) return;
+  var idx = parseInt(item.getAttribute('data-idx'), 10);
+  if (isNaN(idx)) return;
+
+  var history = getSubjectHistory(DATA.activeSubject);
+  var entry = history[idx];
+  if (!entry) return;
+
+  s1.value = entry.s1 !== null ? entry.s1 : '';
+  s2.value = entry.s2 !== null ? entry.s2 : '';
+  s3.value = entry.s3 !== null ? entry.s3 : '';
+  hw.value = entry.hw !== null ? entry.hw : '';
+
+  // Scroll to top to see results
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Auto calculate
+  compute();
 });
 
 /* ── Init ── */
