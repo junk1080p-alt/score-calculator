@@ -72,9 +72,9 @@ body{
 .header{
   display:flex;
   align-items:center;
-  gap:14px;
-  margin-bottom:24px;
-  padding:14px 16px;
+  gap:10px;
+  margin-bottom:16px;
+  padding:12px 14px;
   background:var(--bg-card);
   border-radius:var(--radius-lg);
   border:0.5px solid var(--border-subtle);
@@ -83,7 +83,7 @@ body{
   -webkit-backdrop-filter:blur(20px);
 }
 .header-icon{
-  width:38px;height:38px;
+  width:34px;height:34px;
   border-radius:var(--radius-sm);
   background:linear-gradient(135deg,var(--accent),var(--purple));
   display:flex;
@@ -91,27 +91,329 @@ body{
   justify-content:center;
   font-weight:800;
   color:#fff;
-  font-size:16px;
+  font-size:14px;
   flex-shrink:0;
   box-shadow:0 0 12px var(--accent-glow);
 }
+.header-text{
+  flex:1;
+  min-width:0;
+}
 .header-text h1{
-  font-size:16px;
+  font-size:15px;
   font-weight:600;
   letter-spacing:-0.2px;
   line-height:1.25;
   color:var(--text-primary);
 }
 .header-text .sub{
-  font-size:11px;
+  font-size:10px;
   color:var(--text-tertiary);
   font-weight:400;
   letter-spacing:0.2px;
   margin-top:1px;
 }
+.header-actions{
+  display:flex;
+  gap:6px;
+  flex-shrink:0;
+}
+.header-btn{
+  background:rgba(255,255,255,0.03);
+  border:0.5px solid var(--border-subtle);
+  border-radius:var(--radius-sm);
+  color:var(--text-secondary);
+  font-family:'Inter',sans-serif;
+  font-size:11px;
+  font-weight:500;
+  cursor:pointer;
+  padding:6px 10px;
+  transition:color 0.2s,background 0.2s,border-color 0.2s;
+  white-space:nowrap;
+}
+.header-btn:hover{
+  color:var(--accent-light);
+  border-color:var(--border-active);
+  background:rgba(99,102,241,0.06);
+}
+.header-btn.active{
+  color:var(--accent-light);
+  border-color:var(--border-active);
+  background:rgba(99,102,241,0.1);
+}
 
 /* ════════════════════════════
-   BENTO GRID
+   SUBJECT TAB BAR
+   ════════════════════════════ */
+.subject-bar-wrapper{
+  display:flex;
+  align-items:stretch;
+  gap:6px;
+  margin-bottom:14px;
+}
+.subject-bar{
+  flex:1;
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+  padding:2px 0;
+}
+.subject-bar::-webkit-scrollbar{display:none}
+.subject-tab{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:7px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:500;
+  color:var(--text-secondary);
+  background:rgba(255,255,255,0.02);
+  border:0.5px solid var(--border-subtle);
+  cursor:pointer;
+  transition:all 0.2s;
+  white-space:nowrap;
+  flex-shrink:0;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.subject-tab:active{transform:scale(0.96)}
+.subject-tab:hover{
+  background:rgba(255,255,255,0.05);
+  color:var(--text-primary);
+}
+.subject-tab.active{
+  color:#fff;
+  background:rgba(99,102,241,0.15);
+  border-color:var(--border-active);
+  box-shadow:0 0 12px var(--accent-glow);
+}
+.subject-tab .tab-name{
+  max-width:60px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.subject-tab .tab-close{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:16px;height:16px;
+  border-radius:50%;
+  font-size:9px;
+  line-height:1;
+  color:var(--text-tertiary);
+  background:rgba(255,255,255,0.04);
+  transition:all 0.15s;
+  flex-shrink:0;
+}
+.subject-tab .tab-close:hover{
+  color:var(--danger);
+  background:var(--danger-bg);
+}
+.subject-tab .tab-edit{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:16px;height:16px;
+  border-radius:50%;
+  font-size:9px;
+  line-height:1;
+  color:var(--text-tertiary);
+  transition:all 0.15s;
+  flex-shrink:0;
+}
+.subject-tab .tab-edit:hover{
+  color:var(--accent-light);
+  background:rgba(99,102,241,0.1);
+}
+.subject-add-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;
+  border-radius:20px;
+  font-size:16px;
+  font-weight:500;
+  color:var(--accent-light);
+  background:rgba(255,255,255,0.02);
+  border:0.5px dashed var(--border-subtle);
+  cursor:pointer;
+  transition:all 0.2s;
+  flex-shrink:0;
+}
+.subject-add-btn:hover{
+  color:#fff;
+  background:rgba(99,102,241,0.12);
+  border-color:var(--border-active);
+  box-shadow:0 0 10px var(--accent-glow);
+}
+.subject-add-btn:active{transform:scale(0.94)}
+
+/* ════════════════════════════
+   OVERVIEW MODE
+   ════════════════════════════ */
+.overview-section{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:4px;
+}
+.overview-stat-row{
+  display:flex;
+  gap:8px;
+}
+.overview-stat{
+  flex:1;
+  background:var(--bg-card);
+  border-radius:var(--radius-md);
+  border:0.5px solid var(--border-subtle);
+  padding:12px 10px;
+  text-align:center;
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+.overview-stat .stat-num{
+  font-family:var(--font-mono);
+  font-size:22px;
+  font-weight:700;
+}
+.overview-stat .stat-label{
+  font-size:10px;
+  color:var(--text-tertiary);
+  margin-top:2px;
+  font-weight:500;
+}
+.overview-stat .stat-num.pass{color:var(--success)}
+.overview-stat .stat-num.fail{color:var(--danger)}
+.overview-stat .stat-num.total{color:var(--accent-light)}
+
+.overview-card{
+  background:var(--bg-card);
+  border-radius:var(--radius-lg);
+  border:0.5px solid var(--border-subtle);
+  box-shadow:var(--shadow-card);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  padding:14px 16px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:6px 12px;
+  align-items:center;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.overview-card:active{transform:scale(0.98)}
+.overview-card:hover{
+  border-color:var(--border-active);
+  background:var(--bg-card-hover);
+}
+.overview-card .oc-name{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text-primary);
+}
+.overview-card .oc-actions{
+  display:flex;
+  gap:4px;
+  justify-self:end;
+}
+.overview-card .oc-actions button{
+  background:rgba(255,255,255,0.03);
+  border:0.5px solid var(--border-subtle);
+  border-radius:var(--radius-sm);
+  color:var(--text-tertiary);
+  font-family:'Inter',sans-serif;
+  font-size:10px;
+  font-weight:500;
+  cursor:pointer;
+  padding:4px 8px;
+  transition:color 0.15s,background 0.15s;
+  white-space:nowrap;
+}
+.overview-card .oc-actions .oc-rename:hover{
+  color:var(--accent-light);
+  background:rgba(99,102,241,0.08);
+  border-color:var(--border-active);
+}
+.overview-card .oc-actions .oc-delete:hover{
+  color:var(--danger);
+  background:var(--danger-bg);
+  border-color:rgba(239,68,68,0.2);
+}
+.overview-card .oc-score{
+  font-family:var(--font-mono);
+  font-size:24px;
+  font-weight:700;
+  letter-spacing:-0.5px;
+}
+.overview-card .oc-score.pass{color:var(--success)}
+.overview-card .oc-score.fail{color:var(--danger)}
+.overview-card .oc-score.na{color:var(--text-tertiary);font-size:16px}
+.overview-card .oc-sub{
+  font-size:10px;
+  color:var(--text-tertiary);
+  font-weight:400;
+}
+.overview-card .oc-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  padding:3px 8px;
+  border-radius:10px;
+  font-size:10px;
+  font-weight:600;
+  justify-self:end;
+}
+.overview-card .oc-badge.pass{
+  background:var(--success-bg);
+  color:var(--success);
+  border:0.5px solid rgba(34,197,94,0.15);
+}
+.overview-card .oc-badge.fail{
+  background:var(--danger-bg);
+  color:var(--danger);
+  border:0.5px solid rgba(239,68,68,0.15);
+}
+.overview-card .oc-badge.partial{
+  background:var(--warn-bg);
+  color:var(--warn);
+  border:0.5px solid rgba(245,158,11,0.15);
+}
+.overview-card .oc-badge.na{
+  background:rgba(255,255,255,0.03);
+  color:var(--text-tertiary);
+  border:0.5px solid var(--border-subtle);
+}
+.overview-empty{
+  text-align:center;
+  padding:32px 16px;
+  color:var(--text-tertiary);
+  font-size:13px;
+  line-height:1.6;
+}
+.overview-empty button{
+  display:inline-block;
+  margin-top:12px;
+  background:rgba(99,102,241,0.1);
+  border:0.5px solid var(--border-active);
+  border-radius:var(--radius-sm);
+  color:var(--accent-light);
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  padding:10px 20px;
+  transition:all 0.2s;
+}
+.overview-empty button:hover{
+  background:rgba(99,102,241,0.2);
+  box-shadow:0 0 12px var(--accent-glow);
+}
+
+/* ════════════════════════════
+   BENTO GRID (existing)
    ════════════════════════════ */
 .bento{
   display:flex;
@@ -145,7 +447,7 @@ body{
 }
 
 /* ════════════════════════════
-   WEIGHT BADGES (inline)
+   WEIGHT BADGES
    ════════════════════════════ */
 .weight-row{
   display:flex;
@@ -172,7 +474,7 @@ body{
 .weight-chip .label{color:var(--text-secondary)}
 
 /* ════════════════════════════
-   SCORE INPUTS — 2×2 Bento Grid
+   SCORE INPUTS — 2x2 Grid
    ════════════════════════════ */
 .score-grid{
   display:grid;
@@ -290,7 +592,6 @@ body{
   font-weight:400;
   font-size:14px;
 }
-/* accent left border per settings cell */
 .settings-cell:nth-child(1){border-left:2px solid rgba(245,158,11,0.4)}
 .settings-cell:nth-child(2){border-left:2px solid rgba(139,92,246,0.4)}
 
@@ -566,6 +867,12 @@ body{
   font-weight:400;
 }
 
+/* ── Subject mode visibility ── */
+.subject-mode{display:block}
+.overview-mode{display:none}
+body.mode-overview .subject-mode{display:none}
+body.mode-overview .overview-mode{display:block}
+
 /* ── Utility ── */
 .hidden{display:none !important}
 </style>
@@ -581,10 +888,19 @@ body{
       <h1>學期成績計算機</h1>
       <div class="sub">高中 · 三段制加權評量</div>
     </div>
+    <div class="header-actions">
+      <button class="header-btn" id="overviewBtn">總覽</button>
+    </div>
   </div>
 
-  <!-- ═══ BENTO ═══ -->
-  <div class="bento">
+  <!-- ═══ SUBJECT TAB BAR ═══ -->
+  <div class="subject-bar-wrapper">
+    <div class="subject-bar" id="subjectBar"></div>
+    <button class="subject-add-btn" id="addSubjectBtn">＋</button>
+  </div>
+
+  <!-- ═══ SUBJECT MODE ═══ -->
+  <div class="subject-mode bento" id="subjectMode">
 
     <!-- Card 1: Score Inputs (2x2) -->
     <div class="bento-card">
@@ -631,7 +947,7 @@ body{
       </div>
     </div>
 
-    <!-- Card 3: Settings (pass threshold + target score) -->
+    <!-- Card 3: Settings -->
     <div class="bento-card" id="settingsCard">
       <div class="bento-card-title">設定</div>
       <div class="settings-grid">
@@ -653,10 +969,8 @@ body{
     <!-- Calculate Button -->
     <button class="calc-btn" id="calcBtn">計算學期成績</button>
 
-    <!-- ═══ RESULTS (hidden until calculated) ═══ -->
+    <!-- ═══ RESULTS ═══ -->
     <div class="results hidden" id="results">
-
-      <!-- Total Score Hero -->
       <div class="bento-card">
         <div class="hero-score">
           <div class="score-num" id="totalScore">0.0</div>
@@ -675,14 +989,10 @@ body{
           </div>
         </div>
       </div>
-
-      <!-- Target Analysis (dual mode) -->
       <div class="bento-card">
         <div class="bento-card-title">三段目標分析</div>
         <div class="target-card" id="targetAnalysis"></div>
       </div>
-
-      <!-- What-If Table -->
       <div class="bento-card hidden" id="whatifSection">
         <div class="bento-card-title">三段模擬</div>
         <table class="whatif-table">
@@ -690,17 +1000,17 @@ body{
           <tbody id="whatifBody"></tbody>
         </table>
       </div>
-
-      <!-- Breakdown -->
       <div class="bento-card">
         <div class="bento-card-title">各項貢獻細項</div>
         <div class="breakdown-list" id="breakdownList"></div>
       </div>
-
-      <!-- Clear -->
       <button class="clear-btn" id="clearBtn">清除所有分數</button>
     </div>
+  </div>
 
+  <!-- ═══ OVERVIEW MODE ═══ -->
+  <div class="overview-mode" id="overviewMode">
+    <div class="overview-section" id="overviewSection"></div>
   </div>
 
   <!-- Footer -->
@@ -712,34 +1022,112 @@ body{
 (function(){
 'use strict';
 
-/* ── Constants ── */
-const STORAGE_KEY = 'scorecalcv2_data';
-const W = { s1: 0.2, s2: 0.2, s3: 0.3, hw: 0.3 };
+/* ══════════════════════════════════════
+   Constants
+   ══════════════════════════════════════ */
+var STORAGE_KEY = 'scorecalcv2_data';
+var MAX_SUBJECTS = 30;
+var MAX_NAME_LEN = 8;
+var W = { s1: 0.2, s2: 0.2, s3: 0.3, hw: 0.3 };
 
-/* ── DOM refs ── */
-const $ = id => document.getElementById(id);
-const s1 = $('s1'), s2 = $('s2'), s3 = $('s3'), hw = $('hw');
-const passInput = $('passThreshold'), targetInput = $('targetScore');
-const results = $('results'), calcBtn = $('calcBtn');
-const totalScore = $('totalScore'), statusBadge = $('statusBadge');
-const gradeFill = $('gradeFill'), gradeLine = $('gradeLine'), passLabel = $('passLabel');
-const targetAnalysis = $('targetAnalysis'), breakdownList = $('breakdownList');
-const whatifSection = $('whatifSection'), whatifBody = $('whatifBody'), clearBtn = $('clearBtn');
+/* ══════════════════════════════════════
+   DOM refs
+   ══════════════════════════════════════ */
+var $ = function(id) { return document.getElementById(id); };
+var s1 = $('s1'), s2 = $('s2'), s3 = $('s3'), hw = $('hw');
+var passInput = $('passThreshold'), targetInput = $('targetScore');
+var results = $('results'), calcBtn = $('calcBtn');
+var totalScore = $('totalScore'), statusBadge = $('statusBadge');
+var gradeFill = $('gradeFill'), gradeLine = $('gradeLine'), passLabel = $('passLabel');
+var targetAnalysis = $('targetAnalysis'), breakdownList = $('breakdownList');
+var whatifSection = $('whatifSection'), whatifBody = $('whatifBody'), clearBtn = $('clearBtn');
+var subjectBar = $('subjectBar'), addSubjectBtn = $('addSubjectBtn');
+var overviewBtn = $('overviewBtn'), overviewSection = $('overviewSection');
+var subjectMode = $('subjectMode'), overviewModeEl = $('overviewMode');
 
-/* ── Utilities ── */
+/* ══════════════════════════════════════
+   State
+   ══════════════════════════════════════ */
+var DATA = {
+  version: 1,
+  passThreshold: 60,
+  targetScore: 80,
+  activeSubject: null,
+  subjects: {}
+};
+
+var isOverview = false;
+
+/* ══════════════════════════════════════
+   Utilities
+   ══════════════════════════════════════ */
 function v(el) {
-  const n = parseFloat(el.value);
+  var n = parseFloat(el.value);
   return isNaN(n) ? 0 : Math.min(100, Math.max(0, n));
 }
 function has(el) { return el.value !== ''; }
 function clamp(val, min, max) { return Math.min(max, Math.max(min, val)); }
+function sanitizeName(str) {
+  var s = str.trim();
+  if (!s || s.length === 0) return null;
+  if (s.length > MAX_NAME_LEN) s = s.slice(0, MAX_NAME_LEN).trim();
+  return s || null;
+}
 
-/* ── localStorage helpers ── */
+function getSubjectKeys() {
+  return Object.keys(DATA.subjects).sort();
+}
+
+function getSubjectCount() {
+  return Object.keys(DATA.subjects).length;
+}
+
+function getOrCreateDefaultSubject() {
+  var keys = getSubjectKeys();
+  if (keys.length > 0) return keys[0];
+  DATA.subjects['科目一'] = { name: '科目一', s1: null, s2: null, s3: null, hw: null };
+  DATA.activeSubject = '科目一';
+  return '科目一';
+}
+
+function createEmptySubject(name) {
+  return { name: name, s1: null, s2: null, s3: null, hw: null };
+}
+
+function loadSubjectScores(name) {
+  var sub = DATA.subjects[name];
+  if (!sub) { clearInputs(); return; }
+  s1.value = sub.s1 !== null && sub.s1 !== undefined ? sub.s1 : '';
+  s2.value = sub.s2 !== null && sub.s2 !== undefined ? sub.s2 : '';
+  s3.value = sub.s3 !== null && sub.s3 !== undefined ? sub.s3 : '';
+  hw.value = sub.hw !== null && sub.hw !== undefined ? sub.hw : '';
+}
+
+function saveCurrentScores() {
+  var name = DATA.activeSubject;
+  if (!name || !DATA.subjects[name]) return;
+  var s1v = has(s1) ? v(s1) : null;
+  var s2v = has(s2) ? v(s2) : null;
+  var s3v = has(s3) ? v(s3) : null;
+  var hwv = has(hw) ? v(hw) : null;
+  DATA.subjects[name].s1 = s1v;
+  DATA.subjects[name].s2 = s2v;
+  DATA.subjects[name].s3 = s3v;
+  DATA.subjects[name].hw = hwv;
+}
+
+function clearInputs() {
+  s1.value = ''; s2.value = ''; s3.value = ''; hw.value = '';
+}
+
+/* ══════════════════════════════════════
+   localStorage
+   ══════════════════════════════════════ */
 function loadData() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    var raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    const data = JSON.parse(raw);
+    var data = JSON.parse(raw);
     if (!data || typeof data !== 'object') return null;
     return data;
   } catch (e) {
@@ -748,56 +1136,289 @@ function loadData() {
   }
 }
 
-function saveData(extra) {
+function persistData() {
   try {
-    const data = loadData() || { version: 1 };
-    Object.assign(data, extra);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
   } catch (e) {
-    console.warn('[saveData] failed:', e);
+    console.warn('[persistData] failed:', e);
   }
 }
 
-function restoreInputs() {
-  const data = loadData();
-  if (!data) return;
-  // Restore last input scores
-  if (data.lastInput) {
-    const li = data.lastInput;
-    if (li.s1 !== null && li.s1 !== undefined) s1.value = li.s1;
-    if (li.s2 !== null && li.s2 !== undefined) s2.value = li.s2;
-    if (li.s3 !== null && li.s3 !== undefined) s3.value = li.s3;
-    if (li.hw !== null && li.hw !== undefined) hw.value = li.hw;
+function saveGlobalSettings() {
+  DATA.passThreshold = v(passInput) || 60;
+  DATA.targetScore = v(targetInput) || 80;
+  persistData();
+}
+
+/* ══════════════════════════════════════
+   Tab rendering
+   ══════════════════════════════════════ */
+function renderTabs() {
+  var keys = getSubjectKeys();
+  var active = DATA.activeSubject;
+  subjectBar.innerHTML = keys.map(function(name) {
+    var isActive = name === active;
+    return '<div class="subject-tab' + (isActive ? ' active' : '') + '" data-subject="' + encodeAttr(name) + '">'
+      + '<span class="tab-name">' + escHtml(name) + '</span>'
+      + '<span class="tab-edit" data-action="rename">✎</span>'
+      + '<span class="tab-close" data-action="delete">✕</span>'
+      + '</div>';
+  }).join('');
+
+  // Scroll active tab into view
+  var activeEl = subjectBar.querySelector('.subject-tab.active');
+  if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+}
+
+function encodeAttr(str) {
+  return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function escHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/* ══════════════════════════════════════
+   Overview rendering
+   ══════════════════════════════════════ */
+function renderOverview() {
+  var keys = getSubjectKeys();
+  var totalPass = 0, totalFail = 0, totalNa = 0;
+  var scoreData = keys.map(function(name) {
+    var sub = DATA.subjects[name];
+    var a = sub.s1 !== null ? sub.s1 : 0;
+    var b = sub.s2 !== null ? sub.s2 : 0;
+    var c = sub.s3 !== null ? sub.s3 : 0;
+    var d = sub.hw !== null ? sub.hw : 0;
+    var hasAny = sub.s1 !== null || sub.s2 !== null || sub.s3 !== null || sub.hw !== null;
+    var total = a * W.s1 + b * W.s2 + c * W.s3 + d * W.hw;
+    var PASS = DATA.passThreshold;
+    var passed = hasAny && total >= PASS;
+    return { name: name, total: total, passed: passed, hasAny: hasAny, PASS: PASS };
+  });
+
+  // Stats
+  scoreData.forEach(function(sd) {
+    if (!sd.hasAny) totalNa++;
+    else if (sd.passed) totalPass++;
+    else totalFail++;
+  });
+
+  var html = '';
+
+  // Stat row
+  html += '<div class="overview-stat-row">'
+    + '<div class="overview-stat"><div class="stat-num total">' + keys.length + '</div><div class="stat-label">科目總數</div></div>'
+    + '<div class="overview-stat"><div class="stat-num pass">' + totalPass + '</div><div class="stat-label">已及格</div></div>'
+    + '<div class="overview-stat"><div class="stat-num fail">' + totalFail + '</div><div class="stat-label">不及格</div></div>'
+    + (totalNa > 0 ? '<div class="overview-stat"><div class="stat-num" style="color:var(--text-tertiary)">' + totalNa + '</div><div class="stat-label">未輸入</div></div>' : '')
+    + '</div>';
+
+  if (keys.length === 0) {
+    html += '<div class="overview-empty">'
+      + '還沒有科目<br>點擊右上角 ＋ 新增'
+      + '</div>';
+    overviewSection.innerHTML = html;
+    return;
   }
-  // Restore pass threshold
-  if (data.passThreshold !== undefined && data.passThreshold !== null) {
-    passInput.value = clamp(data.passThreshold, 0, 100);
-  }
-  // Restore target score
-  if (data.targetScore !== undefined && data.targetScore !== null) {
-    targetInput.value = clamp(data.targetScore, 0, 100);
+
+  // Sort: fail first, then na, then pass
+  scoreData.sort(function(a, b) {
+    if (a.hasAny !== b.hasAny) return a.hasAny ? -1 : 1; // ones with data first
+    if (a.passed !== b.passed) return a.passed ? 1 : -1; // fail first
+    return 0;
+  });
+
+  scoreData.forEach(function(sd) {
+    var cls = sd.hasAny ? (sd.passed ? 'pass' : 'fail') : 'na';
+    var badgeCls = sd.hasAny ? (sd.passed ? 'pass' : 'fail') : 'na';
+    var badgeText = sd.hasAny ? (sd.passed ? '及格' : '不及格') : '未輸入';
+    var scoreText = sd.hasAny ? sd.total.toFixed(1) : '—';
+
+    html += '<div class="overview-card" data-subject="' + encodeAttr(sd.name) + '">'
+      + '<div class="oc-name">' + escHtml(sd.name) + '</div>'
+      + '<div class="oc-actions">'
+      + '<button class="oc-rename" data-action="rename" data-subject="' + encodeAttr(sd.name) + '">重新命名</button>'
+      + '<button class="oc-delete" data-action="delete" data-subject="' + encodeAttr(sd.name) + '">刪除</button>'
+      + '</div>'
+      + '<div class="oc-score ' + cls + '">' + scoreText + '</div>'
+      + '<div class="oc-badge ' + badgeCls + '">' + badgeText + '</div>'
+      + '<div class="oc-sub" style="grid-column:1/-1">' + (sd.hasAny ? '門檻 ' + sd.PASS + ' 分' : '尚無成績記錄') + '</div>'
+      + '</div>';
+  });
+
+  overviewSection.innerHTML = html;
+
+  // If no subjects, show empty state with add button
+  if (keys.length === 0) {
+    html = '<div class="overview-empty">'
+      + '還沒有科目<br>'
+      + '<button id="emptyAddBtn">＋ 新增科目</button>'
+      + '</div>';
+    overviewSection.innerHTML = html;
+    var emptyBtn = document.getElementById('emptyAddBtn');
+    if (emptyBtn) emptyBtn.addEventListener('click', function() { handleAddSubject(); });
   }
 }
 
-/* ── Core compute ── */
+/* ══════════════════════════════════════
+   Subject CRUD
+   ══════════════════════════════════════ */
+function handleAddSubject() {
+  var count = getSubjectCount();
+  if (count >= MAX_SUBJECTS) {
+    alert('最多 ' + MAX_SUBJECTS +  ' 科，已達上限');
+    return;
+  }
+
+  var name = prompt('請輸入新科目名稱：');
+  if (!name) return;
+  name = sanitizeName(name);
+  if (!name) {
+    alert('科目名稱不可為空或超過 ' + MAX_NAME_LEN + ' 字');
+    return;
+  }
+  if (DATA.subjects[name]) {
+    alert('科目「' + name + '」已存在');
+    return;
+  }
+
+  // Save current subject scores first
+  saveCurrentScores();
+
+  DATA.subjects[name] = createEmptySubject(name);
+  DATA.activeSubject = name;
+
+  // Load empty scores for new subject
+  clearInputs();
+  results.classList.add('hidden');
+
+  persistData();
+  renderTabs();
+  if (isOverview) { renderOverview(); }
+}
+
+function handleRenameSubject(oldName) {
+  if (getSubjectCount() <= 1) {
+    alert('至少保留一個科目');
+    return;
+  }
+  var newName = prompt('重新命名「' + oldName + '」為：', oldName);
+  if (!newName || newName.trim() === oldName) return;
+  newName = sanitizeName(newName);
+  if (!newName) {
+    alert('科目名稱不可為空或超過 ' + MAX_NAME_LEN + ' 字');
+    return;
+  }
+  if (DATA.subjects[newName]) {
+    alert('科目「' + newName + '」已存在');
+    return;
+  }
+
+  DATA.subjects[newName] = DATA.subjects[oldName];
+  DATA.subjects[newName].name = newName;
+  delete DATA.subjects[oldName];
+
+  if (DATA.activeSubject === oldName) {
+    DATA.activeSubject = newName;
+  }
+
+  persistData();
+  renderTabs();
+  if (isOverview) { renderOverview(); }
+}
+
+function handleDeleteSubject(name) {
+  if (getSubjectCount() <= 1) {
+    alert('至少保留一個科目');
+    return;
+  }
+  if (!confirm('確定刪除科目「' + name + '」？所有成績將被清除。')) return;
+
+  delete DATA.subjects[name];
+  if (DATA.activeSubject === name) {
+    var keys = getSubjectKeys();
+    DATA.activeSubject = keys.length > 0 ? keys[0] : null;
+  }
+
+  // If active subject changed, load its scores
+  if (DATA.activeSubject) {
+    loadSubjectScores(DATA.activeSubject);
+  }
+  results.classList.add('hidden');
+
+  persistData();
+  renderTabs();
+  if (isOverview) { renderOverview(); }
+}
+
+function switchToSubject(name) {
+  if (name === DATA.activeSubject) return;
+  if (!DATA.subjects[name]) return;
+
+  // Save current input to previous subject
+  saveCurrentScores();
+
+  DATA.activeSubject = name;
+  results.classList.add('hidden');
+
+  // Load new subject's scores
+  loadSubjectScores(name);
+
+  persistData();
+  renderTabs();
+}
+
+/* ══════════════════════════════════════
+   Mode switching (subject vs overview)
+   ══════════════════════════════════════ */
+function enterOverview() {
+  if (isOverview) return;
+  isOverview = true;
+  document.body.classList.add('mode-overview');
+  overviewBtn.textContent = '科目';
+  overviewBtn.classList.add('active');
+  // Save current scores before switching
+  saveCurrentScores();
+  renderOverview();
+}
+
+function enterSubjectMode() {
+  if (!isOverview) return;
+  isOverview = false;
+  document.body.classList.remove('mode-overview');
+  overviewBtn.textContent = '總覽';
+  overviewBtn.classList.remove('active');
+}
+
+function toggleMode() {
+  if (isOverview) {
+    enterSubjectMode();
+  } else {
+    enterOverview();
+  }
+}
+
+/* ══════════════════════════════════════
+   Core compute
+   ══════════════════════════════════════ */
 function compute() {
-  const a = v(s1), b = v(s2), c = v(s3), d = v(hw);
-  const PASS = v(passInput) || 60;
-  const TARGET = v(targetInput) || 80;
+  var a = v(s1), b = v(s2), c = v(s3), d = v(hw);
+  var PASS = v(passInput) || 60;
+  var TARGET = v(targetInput) || 80;
 
-  const total = a * W.s1 + b * W.s2 + c * W.s3 + d * W.hw;
-  const passed = total >= PASS;
-  const baseNoS3 = a * W.s1 + b * W.s2 + d * W.hw;
-  const cNeeded = (PASS - baseNoS3) / W.s3;
-  const tNeeded = (TARGET - baseNoS3) / W.s3;
-  const hS1 = has(s1), hS2 = has(s2), hS3 = has(s3), hHw = has(hw);
-  const anyInput = hS1 || hS2 || hS3 || hHw;
+  var total = a * W.s1 + b * W.s2 + c * W.s3 + d * W.hw;
+  var passed = total >= PASS;
+  var baseNoS3 = a * W.s1 + b * W.s2 + d * W.hw;
+  var cNeeded = (PASS - baseNoS3) / W.s3;
+  var tNeeded = (TARGET - baseNoS3) / W.s3;
+  var hS1 = has(s1), hS2 = has(s2), hS3 = has(s3), hHw = has(hw);
+  var anyInput = hS1 || hS2 || hS3 || hHw;
 
-  /* ── Total Score ── */
+  // Total Score
   totalScore.textContent = total.toFixed(1);
   totalScore.className = 'score-num ' + (passed ? 'pass' : 'fail');
 
-  /* ── Status ── */
+  // Status
   if (!anyInput) {
     statusBadge.textContent = '請輸入至少一項成績';
     statusBadge.className = 'status-badge warn';
@@ -808,22 +1429,22 @@ function compute() {
     statusBadge.className = 'status-badge ' + (passed ? 'pass' : 'fail');
   }
 
-  /* ── Grade Bar (dynamic pass line) ── */
-  const pct = Math.min(total, 100);
+  // Grade Bar
+  var pct = Math.min(total, 100);
   gradeFill.style.width = pct + '%';
   gradeFill.className = 'grade-bar-fill ' + (passed ? 'pass' : 'fail');
   gradeLine.style.left = PASS + '%';
   passLabel.textContent = PASS + ' 及格線';
 
-  /* ── Breakdown ── */
-  const items = [
+  // Breakdown
+  var items = [
     { label: '一段', score: a, wgt: W.s1, cls: 'c1' },
     { label: '二段', score: b, wgt: W.s2, cls: 'c2' },
     { label: '三段', score: c, wgt: W.s3, cls: 'c3' },
-    { label: '作業', score: d, wgt: W.hw, cls: 'c4' },
+    { label: '作業', score: d, wgt: W.hw, cls: 'c4' }
   ];
   breakdownList.innerHTML = items.map(function(it) {
-    const contrib = it.score * it.wgt;
+    var contrib = it.score * it.wgt;
     return '<div class="breakdown-item">'
       + '<span class="b-label"><strong>' + it.label + '</strong> ' + it.score + '分</span>'
       + '<div class="b-bar"><div class="b-fill ' + it.cls + '" style="width:' + it.score + '%"></div></div>'
@@ -831,16 +1452,15 @@ function compute() {
       + '</div>';
   }).join('');
 
-  /* ── Target Analysis — Dual Mode ── */
+  // Target Analysis
   var thtml = '';
 
-  // --- Mode A: Pass threshold analysis ---
+  // Pass threshold
   thtml += '<div class="target-row">';
   thtml += '<span class="target-icon">🎯</span>';
   thtml += '<span class="target-label">及格</span>';
   if (!hS3) {
     if (cNeeded <= 0) {
-      // Already safe even with 0
       thtml += '<span class="target-value green">✓ 已穩過</span>';
       thtml += '<span class="target-desc">即使三段 0 分也有 ' + baseNoS3.toFixed(1) + ' 分</span>';
     } else if (cNeeded <= 100) {
@@ -864,13 +1484,11 @@ function compute() {
   }
   thtml += '</div>';
 
-  // --- Mode B: Target score analysis ---
+  // Target score
   thtml += '<div class="target-row">';
   thtml += '<span class="target-icon">🏆</span>';
   thtml += '<span class="target-label">目標</span>';
-
   if (TARGET <= PASS) {
-    // Target is not meaningful — same or below pass threshold
     thtml += '<span class="target-value purple">—</span>';
     thtml += '<span class="target-desc">目標分數不高於及格門檻，請調整</span>';
   } else if (!hS3) {
@@ -909,10 +1527,9 @@ function compute() {
     }
   }
   thtml += '</div>';
-
   targetAnalysis.innerHTML = thtml;
 
-  /* ── What-If Table ── */
+  // What-If Table
   var baseDefined = hS1 || hS2 || hHw;
   var showWhatif = baseDefined && !passed;
   if (showWhatif) {
@@ -920,13 +1537,11 @@ function compute() {
     var testScores;
     if (!hS3) {
       testScores = [0, 20, 40, 60, 80, 100];
-      whatifSection.querySelector('.bento-card-title').textContent = '三段模擬';
     } else {
       testScores = [];
       for (var x = c; x <= 100; x += 10) testScores.push(Math.min(100, x));
       testScores = [...new Set(testScores)].sort(function(a2, b2) { return a2 - b2; });
       if (testScores[testScores.length - 1] !== 100 && testScores[testScores.length - 1] < 100) testScores.push(100);
-      whatifSection.querySelector('.bento-card-title').textContent = '三段提高模擬';
     }
     whatifBody.innerHTML = testScores.map(function(sc) {
       var testTotal = baseNoS3 + sc * W.s3;
@@ -944,17 +1559,71 @@ function compute() {
 
   results.classList.remove('hidden');
 
-  /* ── Auto-save to localStorage ── */
-  saveData({
-    passThreshold: PASS,
-    targetScore: TARGET,
-    lastInput: { s1: a, s2: b, s3: c, hw: d },
-  });
+  // Save current scores + settings to subject
+  saveCurrentScores();
+  DATA.passThreshold = PASS;
+  DATA.targetScore = TARGET;
+  persistData();
+
+  // Update overview if visible
+  if (isOverview) renderOverview();
 }
 
-/* ── Events ── */
+/* ══════════════════════════════════════
+   Init: restore state from localStorage
+   ══════════════════════════════════════ */
+function init() {
+  var saved = loadData();
+  if (saved && saved.subjects && typeof saved.subjects === 'object') {
+    DATA = saved;
+  } else {
+    // First time: create default subject
+    DATA = {
+      version: 1,
+      passThreshold: 60,
+      targetScore: 80,
+      activeSubject: null,
+      subjects: {}
+    };
+  }
+
+  // Ensure version
+  DATA.version = 1;
+
+  // Restore pass threshold and target score
+  if (DATA.passThreshold !== undefined && DATA.passThreshold !== null) {
+    passInput.value = clamp(DATA.passThreshold, 0, 100);
+  }
+  if (DATA.targetScore !== undefined && DATA.targetScore !== null) {
+    targetInput.value = clamp(DATA.targetScore, 0, 100);
+  }
+
+  // Ensure at least one subject
+  getOrCreateDefaultSubject();
+
+  // Ensure activeSubject is valid
+  if (!DATA.activeSubject || !DATA.subjects[DATA.activeSubject]) {
+    var keys = getSubjectKeys();
+    DATA.activeSubject = keys.length > 0 ? keys[0] : null;
+  }
+
+  // Load current subject's scores
+  if (DATA.activeSubject) {
+    loadSubjectScores(DATA.activeSubject);
+  }
+
+  renderTabs();
+  persistData();
+}
+
+/* ══════════════════════════════════════
+   Event listeners
+   ══════════════════════════════════════ */
+
+// Calculate button
 calcBtn.addEventListener('click', compute);
 
+// Enter key on score inputs
 document.querySelectorAll('.score-cell input').forEach(function(inp) {
   inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') compute(); });
   inp.addEventListener('blur', function() {
@@ -963,11 +1632,13 @@ document.querySelectorAll('.score-cell input').forEach(function(inp) {
   });
 });
 
-// Settings change: auto-recompute if results are showing
+// Settings change
 function onSettingChange() {
-  var el = results;
-  if (!el.classList.contains('hidden')) {
-    compute();
+  if (!results.classList.contains('hidden')) compute();
+  else {
+    DATA.passThreshold = v(passInput) || 60;
+    DATA.targetScore = v(targetInput) || 80;
+    persistData();
   }
 }
 passInput.addEventListener('change', onSettingChange);
@@ -981,19 +1652,79 @@ targetInput.addEventListener('blur', function() {
   onSettingChange();
 });
 
+// Clear button
 clearBtn.addEventListener('click', function() {
-  [s1, s2, s3, hw].forEach(function(el) { el.value = ''; });
+  clearInputs();
   results.classList.add('hidden');
+  saveCurrentScores();
+  persistData();
   s1.focus();
 });
 
-/* ── Init: restore from localStorage ── */
-restoreInputs();
+// Add subject
+addSubjectBtn.addEventListener('click', handleAddSubject);
 
-// Log verification
-console.log('[ScoreCalc v2] Phase 1 loaded. STORAGE_KEY=' + STORAGE_KEY);
-var initData = loadData();
-console.log('[ScoreCalc v2] localStorage data:', initData);
+// Overview toggle
+overviewBtn.addEventListener('click', toggleMode);
+
+// Subject bar event delegation (click on tabs, rename, delete)
+subjectBar.addEventListener('click', function(e) {
+  var target = e.target;
+  var tab = target.closest('.subject-tab');
+  if (!tab) return;
+  var name = tab.getAttribute('data-subject');
+  if (!name) return;
+
+  // Check if clicking close or edit
+  if (target.classList.contains('tab-close') || target.closest('.tab-close')) {
+    handleDeleteSubject(name);
+    return;
+  }
+  if (target.classList.contains('tab-edit') || target.closest('.tab-edit')) {
+    handleRenameSubject(name);
+    return;
+  }
+
+  // Click on tab itself → switch subject
+  switchToSubject(name);
+});
+
+// Overview clicks (switch to subject, rename, delete)
+document.addEventListener('click', function(e) {
+  var target = e.target;
+
+  // Overview card click → switch to subject
+  var card = target.closest('.overview-card');
+  if (card && isOverview) {
+    var name = card.getAttribute('data-subject');
+    if (name && DATA.subjects[name]) {
+      // Check if it's a button click inside the card
+      if (target.closest('.oc-actions')) return;
+      enterSubjectMode();
+      switchToSubject(name);
+      return;
+    }
+  }
+
+  // Rename from overview
+  if (target.classList.contains('oc-rename')) {
+    var name = target.getAttribute('data-subject');
+    if (name) handleRenameSubject(name);
+    return;
+  }
+
+  // Delete from overview
+  if (target.classList.contains('oc-delete')) {
+    var name = target.getAttribute('data-subject');
+    if (name) handleDeleteSubject(name);
+    return;
+  }
+});
+
+/* ── Init ── */
+init();
+
+console.log('[ScoreCalc v2] Phase 2 loaded. Subjects:', getSubjectKeys());
 
 })();
 </script>
